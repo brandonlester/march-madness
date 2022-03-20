@@ -2,8 +2,10 @@ library(tidyverse)
 library(ranger)
 #library(rsample)
 
-tn_games <- read_rds("data/tn_games.rds")
-pred_games <- read_rds("data/pred_games.rds")
+submission_sample <- read_csv("data/mens-march-mania-2022/MDataFiles_Stage2/MSampleSubmissionStage2.csv")
+teams <- read_csv("data/mens-march-mania-2022/MDataFiles_Stage2/MTeams.csv")
+tn_games <- read_rds("tn_games.rds")
+pred_games <- read_rds("pred_games.rds")
 
 nm_remove <- names(tn_games)[!names(tn_games) %in% names(pred_games)]
 nm_remove <- nm_remove[nm_remove != "lower_id_won"]
@@ -99,7 +101,6 @@ pred_wp <- pred_results$predictions[,2]
 
 pred_games$model_wp <- pred_wp
 
-submission_sample <- read_csv("data/mens-march-mania-2022/MDataFiles_Stage2/MSampleSubmissionStage2.csv")
 
 my_submission <- pred_games %>% select(ID, Pred = model_wp)
 
@@ -112,7 +113,6 @@ if(
   )
 ) write_csv(my_submission, "kaggle_mm_submission.csv")
 
-teams <- read_csv("data/mens-march-mania-2022/MDataFiles_Stage2/MTeams.csv")
 
 winners <- pred_games %>% 
   select(ID, lower_id, higher_id, model_wp) %>% 

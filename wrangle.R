@@ -4,6 +4,7 @@ library(lubridate)
 
 # import ------------------------------------------------------------------
 
+sample_stage1 <- readr::read_csv("data/mens-march-mania-2022/MDataFiles_Stage1/MSampleSubmissionStage1.csv")
 kaggle_data_folder <- "data/mens-march-mania-2022/MDataFiles_Stage2/"
 kaggle_data_files <- list.files(kaggle_data_folder)
 
@@ -35,7 +36,6 @@ reg_results <- MRegularSeasonDetailedResults
 tn_results <- MNCAATourneyDetailedResults
 rm(MTeams, MSeasons, MNCAATourneySeeds, MSampleSubmissionStage2, MRegularSeasonDetailedResults, MNCAATourneyDetailedResults)
 
-sample_stage1 <- readr::read_csv("data/mens-march-mania-2022/MDataFiles_Stage1/MSampleSubmissionStage1.csv")
 
 # basic eda ---------------------------------------------------------------
 
@@ -282,5 +282,5 @@ pred_games <- sample_stage2 %>%
 skimr::skim(tn_games)
 skimr::skim(pred_games)
 
-saveRDS(tn_games, "data/tn_games.rds")
-saveRDS(pred_games, "data/pred_games.rds")
+saveRDS(tn_games, "tn_games.rds")
+saveRDS(pred_games, "pred_games.rds")
