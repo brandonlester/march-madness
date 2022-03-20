@@ -4,7 +4,7 @@ library(lubridate)
 
 # import ------------------------------------------------------------------
 
-kaggle_data_folder <- "data/ncaam-march-mania-2021/MDataFiles_Stage2/"
+kaggle_data_folder <- "data/mens-march-mania-2022/MDataFiles_Stage2/"
 kaggle_data_files <- list.files(kaggle_data_folder)
 
 for (i in 1:length(kaggle_data_files)) {
@@ -35,7 +35,7 @@ reg_results <- MRegularSeasonDetailedResults
 tn_results <- MNCAATourneyDetailedResults
 rm(MTeams, MSeasons, MNCAATourneySeeds, MSampleSubmissionStage2, MRegularSeasonDetailedResults, MNCAATourneyDetailedResults)
 
-sample_stage1 <- readr::read_csv("data/ncaam-march-mania-2021/MDataFiles_Stage1/MSampleSubmissionStage1.csv")
+sample_stage1 <- readr::read_csv("data/mens-march-mania-2022/MDataFiles_Stage1/MSampleSubmissionStage1.csv")
 
 # basic eda ---------------------------------------------------------------
 
@@ -118,8 +118,8 @@ reg_records <- full_join(
   ) %>% 
   mutate(win_pct = n_wins / (n_wins + n_losses))
 
-tn_15to19 <- tn_results %>% 
-  filter(Season >= 2015) %>% 
+tn_actuals <- tn_results %>% 
+  #filter(Season >= 2015) %>% 
   mutate(
     lower_id = ifelse(WTeamID < LTeamID, WTeamID, LTeamID),
     higher_id = ifelse(WTeamID < LTeamID, LTeamID, WTeamID),
@@ -143,7 +143,7 @@ win_pct_picks <- sample_stage1 %>%
     suffix = c(".lower", ".higher")
   ) %>% 
   mutate(Pred = ifelse(win_pct.lower > win_pct.higher, 1, 0)) %>% 
-  left_join(select(tn_15to19, id, actual), by = c("ID"="id")) %>% 
+  left_join(select(tn_actuals, id, actual), by = c("ID"="id")) %>% 
   filter(!is.na(actual)) %>% 
   mutate(correct = Pred==actual)
 
@@ -280,6 +280,7 @@ pred_games <- sample_stage2 %>%
   )
 
 skimr::skim(tn_games)
+skimr::skim(pred_games)
 
 saveRDS(tn_games, "data/tn_games.rds")
 saveRDS(pred_games, "data/pred_games.rds")
