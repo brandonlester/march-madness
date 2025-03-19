@@ -4,8 +4,8 @@ library(lubridate)
 
 # import ------------------------------------------------------------------
 
-sample_stage1 <- readr::read_csv("data/mens-march-mania-2022/MDataFiles_Stage1/MSampleSubmissionStage1.csv")
-kaggle_data_folder <- "data/mens-march-mania-2022/MDataFiles_Stage2/"
+sample_stage1 <- readr::read_csv("data/kaggle/SampleSubmissionStage1.csv")
+kaggle_data_folder <- "data/kaggle/"
 kaggle_data_files <- list.files(kaggle_data_folder)
 
 for (i in 1:length(kaggle_data_files)) {
@@ -17,7 +17,7 @@ for (i in 1:length(kaggle_data_files)) {
 
 dfs_basics <- c(
   "MTeams", "MSeasons", "MNCAATourneySeeds", 
-  "MRegularSeasonCompactResults", "MNCAATourneyCompactResults", "MSampleSubmissionStage2"
+  "MRegularSeasonCompactResults", "MNCAATourneyCompactResults", "SampleSubmissionStage2"
 )
 dfs_boxscores <- c("MRegularSeasonDetailedResults", "MNCAATourneyDetailedResults")
 dfs_geography <- c("Cities", "MGameCities")
@@ -31,10 +31,10 @@ dfs_supplements <- c(
 teams <- MTeams
 seasons <- MSeasons
 seeds <- MNCAATourneySeeds
-sample_stage2 <- MSampleSubmissionStage2
+sample_stage2 <- SampleSubmissionStage2
 reg_results <- MRegularSeasonDetailedResults
 tn_results <- MNCAATourneyDetailedResults
-rm(MTeams, MSeasons, MNCAATourneySeeds, MSampleSubmissionStage2, MRegularSeasonDetailedResults, MNCAATourneyDetailedResults)
+rm(MTeams, MSeasons, MNCAATourneySeeds, SampleSubmissionStage2, MRegularSeasonDetailedResults, MNCAATourneyDetailedResults)
 
 
 # basic eda ---------------------------------------------------------------
@@ -282,5 +282,5 @@ pred_games <- sample_stage2 %>%
 skimr::skim(tn_games)
 skimr::skim(pred_games)
 
-saveRDS(tn_games, "tn_games.rds")
-saveRDS(pred_games, "pred_games.rds")
+saveRDS(tn_games, "data/processed/tn_games.rds")
+saveRDS(pred_games, "data/processed/pred_games.rds")

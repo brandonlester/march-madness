@@ -2,10 +2,10 @@ library(tidyverse)
 library(ranger)
 #library(rsample)
 
-submission_sample <- read_csv("data/mens-march-mania-2022/MDataFiles_Stage2/MSampleSubmissionStage2.csv")
-teams <- read_csv("data/mens-march-mania-2022/MDataFiles_Stage2/MTeams.csv")
-tn_games <- read_rds("tn_games.rds")
-pred_games <- read_rds("pred_games.rds")
+submission_sample <- read_csv("data/kaggle/SampleSubmissionStage2.csv")
+teams <- read_csv("data/kaggle/MTeams.csv")
+tn_games <- read_rds("data/processed/tn_games.rds")
+pred_games <- read_rds("data/processed/pred_games.rds")
 
 nm_remove <- names(tn_games)[!names(tn_games) %in% names(pred_games)]
 nm_remove <- nm_remove[nm_remove != "lower_id_won"]
@@ -15,7 +15,7 @@ names(pred_games)[!names(pred_games) %in% names(tn_games)]
 length(unique(tn_games$Season))
 
 # use last 2 tournaments (seasons 2019 and 2021) as test
-max_training_season <- 2018
+max_training_season <- lubridate::year(Sys.Date())-3
 dtrain <- tn_games %>% select(-all_of(nm_remove)) %>% filter(Season <= max_training_season)
 dtest <- tn_games %>% select(-all_of(nm_remove)) %>%  filter(Season > max_training_season)
 
@@ -114,6 +114,7 @@ if(
 ) write_csv(my_submission, "kaggle_mm_submission.csv")
 
 
+
 winners <- pred_games %>% 
   select(ID, lower_id, higher_id, model_wp) %>% 
   left_join(select(teams, TeamID, TeamName), by = c("lower_id" = "TeamID")) %>% 
@@ -130,6 +131,8 @@ winners <- pred_games %>%
     )
   ) #%>% pull(winner) %>% is.na() %>% sum()
 
+saveRDS(winners, "data/preds/winners.rds")
+
 who_wins <- function(team_a, team_b) {
   winners %>% 
     filter(
@@ -137,5 +140,13 @@ who_wins <- function(team_a, team_b) {
         TeamName_higher %in% c(team_a, team_b)
     ) %>% 
     pull(winner)
+}
+
+filter_winners <- function(team_a, team_b) {
+  winners %>% 
+    filter(
+      TeamName_lower %in% c(team_a, team_b) & 
+        TeamName_higher %in% c(team_a, team_b)
+    )
 }
 
